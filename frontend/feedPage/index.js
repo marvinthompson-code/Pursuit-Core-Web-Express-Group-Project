@@ -3,16 +3,35 @@ document.addEventListener("DOMContentLoaded", ()=>{
     let currentUsername = sessionStorage.currentUsername;
     let currentPassword = sessionStorage.currentPassword;
     let logout = document.querySelector("#logout")
-    let form = document.querySelector("form")
+    let postForm = document.createElement("form")
     let postText = document.querySelector("#postText")
     let postSubmit = document.querySelector("#postSubmit")
     let postClass = document.querySelector(".postClass")
+    let errorTag = document.createElement("p")
     let getPostUrl = "http://localhost:3000/posts"
     let getProfilesUrl = "http://localhost:3000/users"
     let likesUrl = "http://localhost:3000/likes"
     let likeIcon = "&#128077;"
     let heartIcon = "&#128152;"
+    let userPostSubmit = document.createElement("button")
+    let userPostInput = document.createElement("input")
+
+
+    
+    
     const populateFeed = async() =>{
+        const postFormer = () => {
+            postForm.innerHTML = ""
+            let b = document.createElement("b")
+            b.innerText = "What's On Your Mind? "
+            userPostSubmit.innerText = "Submit 🗯️"
+            let posterClass = document.querySelector(".posterClass")
+            postForm.appendChild(b)
+            postForm.appendChild(userPostInput)
+            postForm.appendChild(userPostSubmit)
+            posterClass.appendChild(postForm)
+            postForm.appendChild(errorTag)
+        }
         try {
             let res = await axios.get(getPostUrl)
             debugger
@@ -61,8 +80,8 @@ document.addEventListener("DOMContentLoaded", ()=>{
                     let remove = document.createElement("button")
                     remove.innerText = "delete"
                     edit.innerText = "edit"
-                    comment.appendChild(edit)
-                    comment.appendChild(remove)
+                    // comment.appendChild(edit)
+                    // comment.appendChild(remove)
 
 
 
@@ -134,6 +153,31 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 submit.addEventListener("click",()=>{
                     commentBox.innerHTML = ""
                 })
+                let postUserID = el.users_id
+                userPostSubmit.addEventListener("click",(e)=>{
+                    e.preventDefault()
+                    errorTag.innerText = ""
+                    if(userPostInput.value){
+                        document.createElement("p")
+                        p.innerText = userPostInput.value
+                        const addPost = async() =>{
+                            try {
+                                let res = await axios.post(getPostUrl+ "/" + postUserID, {
+                                    users_id: (postUserID),
+                                    body : userPostInput
+                                })
+        
+                            } catch (error) {
+                                console.log(error);
+                            }
+                        }
+                        addPost()
+                        
+                    } else {
+                        errorTag.innerText = "Please enter a valid input"
+                    }
+                    userPostInput.value = ""
+                })
             })
             
     
@@ -141,10 +185,12 @@ document.addEventListener("DOMContentLoaded", ()=>{
             console.log(error);
             
         }
+
+        postFormer()
     }
         populateFeed()
         logout.addEventListener("click",()=>{
             sessionStorage.clear();
         })
-        
+
     })
