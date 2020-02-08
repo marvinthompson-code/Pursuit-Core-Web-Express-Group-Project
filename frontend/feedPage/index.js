@@ -121,13 +121,18 @@ document.addEventListener("DOMContentLoaded", ()=>{
                         console.log("bye");
                         const deleteLike = async() =>{
                             try {
-                                let res = await axios.delete(likesUrl+ "/" + likeID)
+                                let res = await axios.delete(likesUrl+ "/" + likeID, {
+                                    likeID
+                                })
                             } catch (error) {
                                 console.log(error);
                             }
                         }
                         deleteLike()
                     }
+                })
+                submit.addEventListener("click",()=>{
+                    commentBox.innerHTML = ""
                 })
             })
             
